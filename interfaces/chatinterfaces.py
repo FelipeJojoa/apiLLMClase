@@ -19,3 +19,4 @@ class ChatCompletionResponse (BaseModel):
     model: str
     choises: list[Choices]
     usage: Usage
+

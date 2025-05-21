@@ -3,7 +3,6 @@ from openai import OpenAI
 client = OpenAI(api_key="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",
                 base_url="https://openrouter.ai/api/v1")
 
-
 messages = input("Cual es tu pregunta: ")
 
 prompt = (
