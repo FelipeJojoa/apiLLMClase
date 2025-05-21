@@ -2,45 +2,43 @@ from fastapi import APIRouter
 from interfaces.chatinterfaces import InputMessage
 import os
 from openai import OpenAI
-import traceback
 
 router = APIRouter()
 
-# Cliente para OpenRouter
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY")  # Configura esta variable en Render o .env local
+  base_url="https://openrouter.ai/api/v1",
+  api_key=os.getenv("OPENROUTER_API_KEY"),
 )
 
 @router.post("/ai-chat")
-def ai_chat(data: InputMessage):
+def aiChat(data: InputMessage):
+    data = data.model_dump()
+    user_message = data["message"]
+
+    prompt = "Por favor responde de manera concreta, clara y siempre en castellano."
+
     try:
-        user_input = data.message.strip()
-        model_name = data.model.strip()
-
-        if not user_input:
-            return {"response": "El mensaje está vacío."}
-
-        if not model_name:
-            return {"response": "No se especificó el modelo."}
-
-        system_prompt = "Eres un asistente que siempre responde en castellano de forma clara y breve."
-        full_prompt = f"Por favor responde en castellano a la siguiente pregunta: {user_input}"
-
         completion = client.chat.completions.create(
-            model=model_name,
+            model="meta-llama/llama-3.3-8b-instruct:free",
             messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": full_prompt}
+                {
+                    "role": "system",
+                    "content": "Eres un asistente inteligente que responde en español (Colombia), de forma clara, "
+                    "concisa y siempre manteniendo un tono respetuoso y amigable. Responde de manera precisa a las "
+                    "preguntas del usuario, usando un lenguaje sencillo, directo y adaptado al contexto colombiano."
+                },
+                {
+                    "role": "user",
+                    "content": f"{prompt} Responde a esta pregunta: {user_message}"
+                }
             ]
         )
 
-        if not completion or not completion.choices:
-            return {"response": "No se recibió respuesta del modelo."}
-
-        content = completion.choices[0].message.content
-        return {"response": content}
+        respuesta = completion.choices[0].message.content
+        print("Respuesta del modelo:", respuesta)
+        print("response "+completion.choices[0].message.content)
+        return {"reply": respuesta}
 
     except Exception as e:
-        # Captura errores para facilitar el diagnóstico
-        return {"response": f"Error al procesar la solicitud: {str(e)}\n\n{traceback.format_exc()}"}
+        print(f"Error: {e}")
+        return {"reply": f"Error al generar respuesta: {str(e)}"}
