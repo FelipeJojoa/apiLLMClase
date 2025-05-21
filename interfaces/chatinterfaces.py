@@ -1,13 +1,14 @@
 from pydantic import BaseModel
+from typing import List
 
 class InputMessage(BaseModel):
     message: str
     model: str
 
-class Usage (BaseModel):
-    prompt_tockens: int
-    completion_tockens: int
-    total_tockens: int
+class Usage(BaseModel):
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
 
 class Message(BaseModel):
     content: str
@@ -15,8 +16,8 @@ class Message(BaseModel):
 class Choices(BaseModel):
     message: Message
 
-class ChatCompletionResponse (BaseModel):
+class ChatCompletionResponse(BaseModel):
     model: str
-    choises: list[Choices]
+    choices: List[Choices]
     usage: Usage
 

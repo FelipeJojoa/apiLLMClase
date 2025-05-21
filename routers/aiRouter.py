@@ -2,13 +2,14 @@ from fastapi import APIRouter
 from interfaces.chatinterfaces import InputMessage
 import os
 from openai import OpenAI
+import traceback
 
 router = APIRouter()
 
-# Cliente de OpenRouter
+# Cliente para OpenRouter
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY")
+    api_key=os.getenv("OPENROUTER_API_KEY")  # Configura esta variable en Render o .env local
 )
 
 @router.post("/ai-chat")
@@ -41,5 +42,5 @@ def ai_chat(data: InputMessage):
         return {"response": content}
 
     except Exception as e:
-        # Capturamos todos los errores como respuesta JSON válida
-        return {"response": f"Error al procesar la solicitud: {str(e)}"}
+        # Captura errores para facilitar el diagnóstico
+        return {"response": f"Error al procesar la solicitud: {str(e)}\n\n{traceback.format_exc()}"}

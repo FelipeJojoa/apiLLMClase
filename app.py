@@ -1,22 +1,23 @@
 from fastapi import FastAPI
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from routers import aiRouter
 
 app = FastAPI()
-app.include_router(aiRouter.router)
 
+# Configura CORS correctamente
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Origen Puedes cambiar "*" por ["http://127.0.0.1:5500&quot;] si quieres más seguridad
+    allow_origins=["https://frontai-vpb6.onrender.com/"],  # Para pruebas. En producción, usa ["https://tusitio.com"]
     allow_credentials=True,
-    allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permite todos los encabezados
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+# Incluir rutas
+app.include_router(aiRouter.router)
 
 @app.get("/")
 def index():
-    return{"messages": "API running" }
+    return {"message": "API running"}
 
 
