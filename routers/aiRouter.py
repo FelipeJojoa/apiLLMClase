@@ -18,7 +18,7 @@ def aiChat(data: InputMessage):
     message = "Por favor response de manera concreta, clara y siempre en castellano."
 
     try:
-        completion: ChatCompletionResponse= client.chat.completions.create(
+        completion = client.chat.completions.create(
             model="google/gemma-3-1b-it:free",
             messages=[
                 {
