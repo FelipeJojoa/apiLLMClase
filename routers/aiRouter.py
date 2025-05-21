@@ -1,12 +1,14 @@
 from fastapi import APIRouter
+from interfaces.chatinterfaces import InputMessage
+import os
 from openai import OpenAI
-
-from interfaces.chatinterfaces import ChatCompletionResponse, InputMessage
 
 router = APIRouter()
 
-client = OpenAI(api_key="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",
-                base_url="https://openrouter.ai/api/v1")
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key=os.getenv("OPENROUTER_API_KEY"),
+)
 
 @router.post("/ai-chat")
 def aiChat(data: InputMessage):
