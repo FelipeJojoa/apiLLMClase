@@ -6,35 +6,30 @@ from openai import OpenAI
 router = APIRouter()
 
 client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=os.getenv("OPENROUTER_API_KEY"),
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
 )
 
 @router.post("/ai-chat")
 def aiChat(data: InputMessage):
     data = data.model_dump()
     print("message: " + data["message"])
+    print("model: " + data["model"])
 
-    message = "Por favor response de manera concreta, clara y siempre en castellano."
+    system_message = "Eres un asistente que siempre responde en castellano de forma clara y breve"
+    user_prompt = "Por favor responde de manera concreta, clara y siempre en castellano. Responde a esta pregunta: " + data["message"]
 
     try:
         completion = client.chat.completions.create(
-            model="google/gemma-3-1b-it:free",
+            model=data["model"],
             messages=[
-                {
-                    "role": "system",
-                    "content":"Eres un asistente que siempre responde en castellano de forma clara y breve"
-                },
-
-                {
-                    "role": "user", ""
-                    "content":message + "responde a esta pregunta: " +data["message"]
-                }
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_prompt}
             ]
         )
-        print("response: "+completion.choices[0].message.content)
-        return {"response":completion.choices[0].message.content}
+        response = completion.choices[0].message.content
+        print("response: " + response)
+        return {"response": response}
     except Exception as e:
         print(f"Error: {e}")
-        return {"status":str(e)}
-
+        return {"status": str(e)}
