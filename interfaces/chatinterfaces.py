@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 class InputMessage(BaseModel):
     message: str
+    model: str
 
 class Usage (BaseModel):
     prompt_tockens: int

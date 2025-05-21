@@ -5,40 +5,41 @@ from openai import OpenAI
 
 router = APIRouter()
 
-# Configuración del cliente de OpenRouter
+# Cliente de OpenRouter
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY"),
+    api_key=os.getenv("OPENROUTER_API_KEY")
 )
 
 @router.post("/ai-chat")
 def ai_chat(data: InputMessage):
-    data = data.model_dump()
-    print(f"Mensaje recibido: {data['message']}")
-    print(f"Modelo seleccionado: {data['model']}")
-
-    system_message = "Eres un asistente que siempre responde en castellano de forma clara y breve."
-    user_prompt = (
-        "Por favor responde de manera concreta, clara y siempre en castellano. "
-        f"Responde a esta pregunta: {data['message']}"
-    )
-
     try:
+        user_input = data.message.strip()
+        model_name = data.model.strip()
+
+        if not user_input:
+            return {"response": "El mensaje está vacío."}
+
+        if not model_name:
+            return {"response": "No se especificó el modelo."}
+
+        system_prompt = "Eres un asistente que siempre responde en castellano de forma clara y breve."
+        full_prompt = f"Por favor responde en castellano a la siguiente pregunta: {user_input}"
+
         completion = client.chat.completions.create(
-            model=data["model"],
+            model=model_name,
             messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": user_prompt}
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": full_prompt}
             ]
         )
 
-        if completion and completion.choices:
-            response = completion.choices[0].message.content
-            print(f"Respuesta del modelo: {response}")
-            return {"response": response}
-        else:
-            return {"response": "No se obtuvo una respuesta del modelo."}
+        if not completion or not completion.choices:
+            return {"response": "No se recibió respuesta del modelo."}
+
+        content = completion.choices[0].message.content
+        return {"response": content}
 
     except Exception as e:
-        print(f"Error en la solicitud: {e}")
-        return {"response": f"Error del servidor: {str(e)}"}
+        # Capturamos todos los errores como respuesta JSON válida
+        return {"response": f"Error al procesar la solicitud: {str(e)}"}
