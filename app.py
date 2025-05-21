@@ -7,7 +7,7 @@ app = FastAPI()
 # Configura CORS correctamente
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Para pruebas. En producción, usa ["https://tusitio.com"]
+    allow_origins=["https://frontai-vpb6.onrender.com"],  # Para pruebas. En producción, usa ["https://tusitio.com"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
