@@ -13,5 +13,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Incluir rutas
 app.include_router(aiRouter.router)
+
+@app.get("/")
+def index():
+    return {"message": "API running"}
+
 
