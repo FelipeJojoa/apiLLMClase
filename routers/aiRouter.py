@@ -56,4 +56,3 @@ async def ai_chat(data: InputMessage):
             content={"reply": "⚠️ Error interno del servidor. Intenta más tarde."},
             media_type="application/json"
         )
-
