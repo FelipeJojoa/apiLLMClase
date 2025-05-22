@@ -3,6 +3,9 @@ from fastapi.responses import JSONResponse
 from interfaces.chatinterfaces import InputMessage
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 router = APIRouter()
 
@@ -18,32 +21,23 @@ async def ai_chat(data: InputMessage):
         if not user_message:
             raise HTTPException(status_code=400, detail="El mensaje no puede estar vacío")
 
-        prompt = "Por favor responde de manera concreta, clara y siempre en castellano."
-
-        completion = client.chat.completions.create(
-            model="meta-llama/llama-3.3-8b-instruct:free",
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Eres un asistente inteligente que responde en español (Colombia), de forma clara, "
-                        "concisa y siempre manteniendo un tono respetuoso y amigable. Responde de manera precisa a las "
-                        "preguntas del usuario, usando un lenguaje sencillo, directo y adaptado al contexto colombiano."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": f"{prompt} Responde a esta pregunta: {user_message}",
-                },
-            ],
+        system_prompt = (
+            "Eres un asistente inteligente que responde en español de forma clara, "
+            "concisa y amigable. Usa un lenguaje sencillo y apropiado para Colombia."
         )
 
-        if not completion or not completion.choices or not completion.choices[0].message.content:
-            raise ValueError("La respuesta del modelo está vacía o mal formada.")
+        completion = client.chat.completions.create(
+            model="cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ]
+        )
+
+        if not completion or not completion.choices:
+            raise ValueError("La respuesta del modelo está vacía.")
 
         respuesta = completion.choices[0].message.content.strip()
-        print("✅ Respuesta del modelo:", respuesta)
-
         return JSONResponse(content={"reply": respuesta}, media_type="application/json")
 
     except HTTPException as he:
