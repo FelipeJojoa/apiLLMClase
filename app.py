@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import aiRouter  # Asegúrate de tener el import correcto
 
 app = FastAPI()
+{ "reply": "Hola, ¿cómo puedo ayudarte?" } # esta línea se modifico, se puede quitar
 
 # Agrega aquí el dominio del frontend local o remoto que quieras permitir
 app.add_middleware(

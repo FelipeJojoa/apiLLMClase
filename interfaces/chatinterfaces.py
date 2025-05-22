@@ -3,7 +3,6 @@ from typing import List
 
 class InputMessage(BaseModel):
     message: str
-    model: str
 
 class Usage(BaseModel):
     prompt_tokens: int
