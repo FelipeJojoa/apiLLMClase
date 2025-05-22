@@ -13,4 +13,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(aiRouter)
+app.include_router(aiRouter.router)
+
