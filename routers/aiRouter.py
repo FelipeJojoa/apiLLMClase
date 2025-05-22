@@ -6,11 +6,9 @@ from openai import OpenAI
 
 router = APIRouter()
 
-
-# Cliente de OpenRouter
 client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=os.getenv("OPENROUTER_API_KEY"),
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
 )
 
 @router.post("/ai-chat")
@@ -20,9 +18,7 @@ async def ai_chat(data: InputMessage):
         if not user_message:
             raise HTTPException(status_code=400, detail="El mensaje no puede estar vacío")
 
-        prompt = (
-            "Por favor responde de manera concreta, clara y siempre en castellano."
-        )
+        prompt = "Por favor responde de manera concreta, clara y siempre en castellano."
 
         completion = client.chat.completions.create(
             model="meta-llama/llama-3.3-8b-instruct:free",
@@ -42,14 +38,22 @@ async def ai_chat(data: InputMessage):
             ],
         )
 
-        respuesta = completion.choices[0].message.content
+        if not completion or not completion.choices or not completion.choices[0].message.content:
+            raise ValueError("La respuesta del modelo está vacía o mal formada.")
+
+        respuesta = completion.choices[0].message.content.strip()
         print("✅ Respuesta del modelo:", respuesta)
 
-        return JSONResponse(content={"reply": respuesta})
+        return JSONResponse(content={"reply": respuesta}, media_type="application/json")
 
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        print(f"❌ Error en /ai-chat: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return JSONResponse(
             status_code=500,
-            content={"reply": f"⚠️ Error al generar respuesta: {str(e)}"}
+            content={"reply": "⚠️ Error interno del servidor. Intenta más tarde."},
+            media_type="application/json"
         )
+
