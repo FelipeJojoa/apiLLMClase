@@ -38,13 +38,8 @@ async def ai_chat(data: InputMessage):
             raise ValueError("La respuesta del modelo está vacía.")
 
         respuesta = completion.choices[0].message.content.strip()
-        #print("Respuesta del modelo:", respuesta)
-
-        print("📡 Raw completion object:", completion)
-        return JSONResponse(content={"debug": str(completion)}, media_type="application/json")
-
-
-        #return JSONResponse(content={"reply": respuesta}, media_type="application/json")
+        print("Respuesta del modelo:", respuesta)
+        return JSONResponse(content={"reply": respuesta}, media_type="application/json")
         
 
     except HTTPException as he:
