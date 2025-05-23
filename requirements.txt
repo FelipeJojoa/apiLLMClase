@@ -1,7 +1,12 @@
-fastapi
-uvicorn
-gunicorn
-httptools
-openai
-python-dotenv
+# Archivo de dependencias para el proyecto Gemini-like AI System
+# Se han fijado las versiones para asegurar la reproducibilidad del entorno.
 
+fastapi==0.111.0          # Framework web para construir APIs
+uvicorn==0.29.0           # Servidor ASGI para ejecutar FastAPI
+gunicorn==22.0.0          # Servidor WSGI para despliegue en producción (ejecuta Uvicorn workers)
+httptools==0.6.1          # Dependencia opcional para Uvicorn para mejor rendimiento
+uvloop==0.19.0            # Dependencia opcional para Uvicorn (loop de eventos asíncrono)
+openai==1.30.1            # Cliente oficial para interactuar con la API de OpenAI/OpenRouter
+python-dotenv==1.0.1      # Para cargar variables de entorno desde un archivo .env
+pydantic==2.7.1           # Biblioteca para la validación de datos y la configuración de modelos
+httpx==0.27.0             # Cliente HTTP para Python, usado internamente por OpenAI y para manejo de excepciones
