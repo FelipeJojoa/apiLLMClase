@@ -15,7 +15,7 @@ prompt = (
 )
 
 completion = client.chat.completions.create(
-    model="cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
+    model="google/gemma-3-1b-it:free",
     messages=[{"role": "user", "content": prompt}]
 )
 
